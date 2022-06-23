@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Flexbox by Michael PERARD</title>
+	<style type="text/css">
+		html{scroll-behavior:smooth;}
+		body{overflow:hidden;margin:0;padding:0;font-family:sans-serif;scroll-behavior:smooth;}
+		h2{font-size:2rem;margin:10px 0;}
+		h5{margin:0;color:#0a92fd}
+		p{font-size:1.3rem;}
+		ul{list-style:none;margin:0;padding:0;}
+		ul>li::before{content:"- ";}
+		em{font-weight:bold;}
+
+		.page{height:100vh;width:100vw;display:flex;position:relative;padding:10px 10px 70px;box-sizing:border-box;gap:10px;}
+		.b0{padding:0;}
+
+		.sidenav,.nav{position:absolute;left:0;width:100%;display:flex;justify-content:space-evenly}
+		.nav{bottom:10px;}
+		.sidenav{justify-content:center;padding:0 10px;box-sizing:border-box;top:10px;flex-wrap:wrap;overflow-x:scroll;flex-direction:column;gap:10px;height:70px;}
+		.l-button{padding:10px 10px;margin:2px;color:#0a92fd;text-decoration:none;border-radius:5px;box-shadow:inset 0 0 0 1px #0a92fd;font-size:1.4rem;}
+		.button{padding:10px 40px;background-color:#0a92fd;border-radius:5px;color:white;box-shadow:4px 4px 4px rgb(0 0 0/20%),inset -2px -2px 8px rgb(0 0 0/20%),inset 2px 2px 8px rgb(255 255 255/50%);text-decoration:none;font-size:1.4rem;}
+		.button.disabled{background-color:grey;color:lightgrey;cursor:not-allowed;box-shadow:4px 4px 4px rgb(0 0 0/20%);}
+		.button:not(.disabled):hover{background-color:#0f88e8;box-shadow:2px 2px 1px rgb(0 0 0/.2),inset 2px 2px 8px rgb(0 0 0/20%),inset -2px -2px 8px rgb(255 255 255/20%);color:#cecece;}
+		.box{padding:10px;margin:0;background-color:#f1f1f1;position:relative;border-radius:10px;box-shadow:0 0 0 1px rgb(0 0 0/.2);}
+		.box>i{position:absolute;right:0;font-size:1rem;}
+		.box>i.bot{bottom:0;transform:translateY(100%);padding-top:2px;}
+		.box>i.top{bottom:100%;padding-bottom:2px;}
+
+		#p1{align-items:center;justify-content:center;}
+
+		#sp1{flex-direction:column;align-items:center;justify-content:center;}
+		#sp2{flex-wrap:wrap;align-items:center;justify-content:center;}
+		.wrap-example{padding:20px 10vw;}
+		#sp3{justify-content:space-between;align-items:center;}
+		#sp4{align-items:flex-end;justify-content:center;}
+		#sp5{align-content:flex-start;flex-wrap:wrap;align-items:center;}
+		.side{display:flex;top:0;left:0;overflow:hidden;flex-wrap:wrap;scroll-behavior:smooth;flex-direction:column;}
+		.side>.page{padding-top:110px;}
+
+		#p3{overflow:hidden;}
+		input[type=radio]{display:none;}
+		input[type=reset]{border-radius:5px;box-shadow:inset 0 0 0 1px #0a92fd;padding:1px 4px;line-height:30px;font-size:1.1rem;border:unset;color:#0a92fd;line-height:unset;margin-top:10px;cursor:pointer;}
+		.do-flex{position:absolute;z-index:1;background-color:#f1f1f180;font-size:1rem;top:10px;left:10px;right:10px;}
+		label{color:#0a92fd;border-radius:5px;box-shadow:inset 0 0 0 1px #0a92fd;padding:1px 4px;line-height:30px;font-size:1.1rem;cursor:pointer;}
+		input[type=reset]:hover,label:hover,.l-button:hover{box-shadow:inset 0 0 0 2px #0a92fd;}
+		#f-d1:checked~.flex-example{flex-direction:column;} #f-d2:checked~.flex-example{flex-direction:row;}
+		#f-w1:checked~.flex-example{flex-wrap:wrap;} #f-w2:checked~.flex-example{flex-wrap:nowrap;}
+		#j-c1:checked~.flex-example{justify-content:center;} #j-c2:checked~.flex-example{justify-content:flex-start;} #j-c3:checked~.flex-example{justify-content:flex-end;}
+		#a-i1:checked~.flex-example{align-items:center;} #a-i2:checked~.flex-example{align-items:flex-start;} #a-i3:checked~.flex-example{align-items:flex-end;}
+		#a-c1:checked~.flex-example{align-content:center;} #a-c2:checked~.flex-example{align-content:flex-start;} #a-c3:checked~.flex-example{align-content:flex-end;}
+		#f-d1:checked~.do-flex>label[for="f-d1"],#f-d2:checked~.do-flex>label[for="f-d2"],
+		#f-w1:checked~.do-flex>label[for="f-w1"],#f-w2:checked~.do-flex>label[for="f-w2"],
+		#j-c1:checked~.do-flex>label[for="j-c1"],#j-c2:checked~.do-flex>label[for="j-c2"],#j-c3:checked~.do-flex>label[for="j-c3"],
+		#a-i1:checked~.do-flex>label[for="a-i1"],#a-i2:checked~.do-flex>label[for="a-i2"],#a-i3:checked~.do-flex>label[for="a-i3"],
+		#a-c1:checked~.do-flex>label[for="a-c1"],#a-c2:checked~.do-flex>label[for="a-c2"],#a-c3:checked~.do-flex>label[for="a-c3"]{background-color:#0a92fd1a;box-shadow:inset 0 0 0 2px #0a92fd;}
+		.box-example{text-align:center;width:11vw;height:11vw;line-height:11vw;}
+
+		@media (min-width:992px){
+			.sidenav{flex-direction:row;overflow:auto;height:auto;top:20px}
+			.nav{bottom:15px;}
+			.do-flex{right:unset;padding:10px 40px;font-size:1.2rem;}
+			label,input[type=reset]{font-size:1.3rem;padding:5px 10px;line-height:40px;}
+			input[type=reset]{line-height:30px;}
+		}
+
+		#ToMenu{z-index:1;position:absolute;top:10px;left:15px;display:inline-block;background-color:#e8463a;color:white;text-decoration:none;font-family:monospace;transition:.5s;border:solid 2px #e8463a;border-radius:10px;box-shadow:inset 0 0 0 2px white;font-size:20px;padding:10px 20px;}
+		#ToMenu:hover{transition:.8s;box-shadow:none;}
+
+
+	</style>
+</head>
+<body>
+	<a id="ToMenu" href="http://mikgamer.fr">mikgamer.fr</a>
+	<div class="page" id="p1">
+		<div class="box">
+			<h2>What is Flexbox ?</h2>
+			<h5>Made by Michael PERARD</h5>
+			<p>Flexbox is an HTML layout module, with it you can align, justify and set the direction of your content.</p>
+			<p>To use this layout a container is required, instead of beeing a block or inline, he is going to be flex.</p>
+			<i class="bot">display:flex; align-items:center; justify-content:center;</i>
+		</div>
+		<div class="nav">
+			<a class="button disabled">Previous</a>
+			<a href="#p2" class="button">Next</a>
+		</div>
+	</div>
+	<div class="page b0" id="p2">
+		<div class="side">
+			<div class="page" id="sp1">
+				<div class="box">
+					<h2>flex-direction</h2>
+					<p>This property set direction of the items in the container.</p>
+					<i class="top">display:flex; <em title="Here 'flex-direction:column' is used">flex-direction:column;</em> align-items:center; justify-content:center;</i>
+				</div>
+				<div class="box">
+					<h2>Possible values</h2>
+					<ul>
+						<li>column</li>
+						<li>column-reverse</li>
+						<li>row</li>
+						<li>row-reverse</li>
+					</ul>
+				</div>
+			</div>
+			<div class="page" id="sp2">
+				<div class="box">
+					<h2>flex-wrap</h2>
+					<p>This property specifies whether the items in the container wrap or not.</p>
+					<i class="top">display:flex; <em title="Here 'flex-wrap:wrap' is used">flex-wrap:wrap;</em> align-items:center; justify-content:center;</i>
+				</div>
+				<div class="box">
+					<h2>Possible values</h2>
+					<ul>
+						<li>wrap</li>
+						<li>nowrap</li>
+						<li>wrap-reverse</li>
+					</ul>
+				</div>
+				<div class="box wrap-example">1</div>
+				<div class="box wrap-example">2</div>
+				<div class="box wrap-example">3</div>
+			</div>
+			<div class="page" id="sp3">
+				<div class="box">
+					<h2>justify-content</h2>
+					<p>This property is used to justify the items in the container.</p>
+					<i class="top">display:flex; <em title="Here 'justify-content:space-between' is used">justify-content:space-between;</em> align-items:center;</i>
+				</div>
+				<div class="box">
+					<h2>Possible values</h2>
+					<ul>
+						<li>center</li>
+						<li>flex-start</li>
+						<li>flex-end</li>
+						<li>space-between</li>
+						<li>space-around</li>
+						<li>space-evenly</li>
+					</ul>
+				</div>
+			</div>
+			<div class="page" id="sp4">
+				<div class="box">
+					<h2>align-items</h2>
+					<p>This property is used to aligns all the items in the container.</p>
+					<i class="top">display:flex; <em title="Here 'align-items:flex-end' is used">align-items:flex-end;</em> justify-content:center;</i>
+				</div>
+				<div class="box">
+					<h2>Possible values</h2>
+					<ul>
+						<li>center</li>
+						<li>flex-start</li>
+						<li>flex-end</li>
+						<li>baseline</li>
+						<li>stretch</li>
+					</ul>
+				</div>
+			</div>
+			<div class="page" id="sp5">
+				<div class="box">
+					<h2>align-content</h2>
+					<p>This property is used to aligns the lines of items in the container.</p>
+					<i class="top">display:flex; <em title="Here 'align-content:flex-start' is used">align-content:flex-start;</em> flex-wrap:wrap; align-items:center;</i>
+				</div>
+				<div class="box">
+					<h2>Possible values</h2>
+					<ul>
+						<li>center</li>
+						<li>flex-start</li>
+						<li>flex-end</li>
+						<li>space-between</li>
+						<li>space-around</li>
+						<li>space-evenly</li>
+					</ul>
+				</div>
+				<div class="box wrap-example">1</div>
+				<div class="box wrap-example">2</div>
+				<div class="box wrap-example">3</div>
+			</div>
+		</div>
+		<div class="sidenav">
+			<a class="l-button" href="#sp1">flex-direction</a>
+			<a class="l-button" href="#sp2">flex-wrap</a>
+			<a class="l-button" href="#sp3">justify-content</a>
+			<a class="l-button" href="#sp4">align-items</a>
+			<a class="l-button" href="#sp5">align-content</a>
+		</div>
+		<div class="nav">
+			<a href="#p1" class="button">Previous</a>
+			<a href="#p3" class="button">Next</a>
+		</div>
+	</div>
+	<form class="page b0" id="p3">
+		<input type="radio" id="f-d1" name="f-d" value="column" checked><input type="radio" id="f-d2" name="f-d" value="row">
+		<input type="radio" id="f-w1" name="f-w" value="wrap" checked><input type="radio" id="f-w2" name="f-w" value="nowrap">
+		<input type="radio" id="j-c1" name="j-c" value="center" checked><input type="radio" id="j-c2" name="j-c" value="flex-start"><input type="radio" id="j-c3" name="j-c" value="flex-end">
+		<input type="radio" id="a-i1" name="a-i" value="center" checked><input type="radio" id="a-i2" name="a-i" value="flex-start"><input type="radio" id="a-i3" name="a-i" value="flex-end">
+		<input type="radio" id="a-c1" name="a-c" value="center" checked><input type="radio" id="a-c2" name="a-c" value="flex-start"><input type="radio" id="a-c3" name="a-c" value="flex-end">
+		<div class="box do-flex">
+			flex-direction: <label for="f-d1">column</label> <label for="f-d2">row</label><br>
+			flex-wrap: <label for="f-w1">wrap</label> <label for="f-w2">nowrap</label><br>
+			justify-content: <label for="j-c1">center</label> <label for="j-c2">flex-start</label> <label for="j-c3">flex-end</label><br>
+			align-items: <label for="a-i1">center</label> <label for="a-i2">flex-start</label> <label for="a-i3">flex-end</label><br>
+			align-content: <label for="a-c1">center</label> <label for="a-c2">flex-start</label> <label for="a-c3">flex-end</label><br>
+			<input type="reset" value="Reset">
+		</div>
+		<div class="page flex-example">
+			<div class="box box-example">1</div>
+			<div class="box box-example">2</div>
+			<div class="box box-example">3</div>
+			<div class="box box-example">4</div>
+			<div class="box box-example">5</div>
+			<div class="box box-example">6</div>
+			<div class="box box-example">7</div>
+			<div class="box box-example">8</div>
+			<div class="box box-example">9</div>
+		</div>
+		<div class="nav">
+			<a href="#p2" class="button">Previous</a>
+			<a class="button disabled">Next</a>
+		</div>
+	</form>
+	<!-- Website made by Michael PERARD 2021-->
+</body>
+</html>
